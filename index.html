@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lanche ou Net</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+        * {
+        margin: 0;
+        outline: none;
+        border: none;
+        font-family: "Montserrat", sans-serif;
+        color: #181818;
+        }
+
+        *::selection {
+        background-color: #e68d33;
+        color: #ffffff;
+        }
+
+        body {
+        height: 100vh;
+        background-color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        }
+
+        select {
+        padding: 0.5vh 1vh;
+        background: none;
+        font-size: 0.8rem;
+        }
+        option {
+        background: #fff;
+        color: black;
+        margin: 0.2vh 0;
+        }
+
+        .tab {
+        border-radius: 1vh;
+        padding: 1vh 0;
+        background-color: #f3f3f3;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        margin: 1vh 0;
+        justify-content: space-between;
+        }
+
+        .cabecalho {
+        background-color: #dfdede;
+        margin: auto;
+        padding: 1vh;
+        }
+
+        .cel {
+        width: 100px;
+        }
+
+        .tabela {
+        margin: 2vh 0;
+        }
+
+        main {
+        width: 800px;
+        border-radius: 2rem;
+        background-color: #f3f3f3;
+        padding: 3vh;
+        }
+
+        .subtotal {
+        font-size: 0.8rem;
+        }
+
+        input {
+        background: none;
+        }
+
+        .btx {
+        display: flex;
+        justify-content: flex-end;
+        }
+
+        .top {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        }
+
+        .total {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 2vh;
+        }
+
+        input[type="button"] {
+        font-weight: 700;
+        background-color: #e68d33;
+        color: #ffffff;
+        padding: 0.5rem;
+        min-width: 6vh;
+        border-radius: 2rem;
+        margin-left: 0.5rem;
+        }
+
+        input[type="button"]:hover {
+        font-weight: 700;
+        background-color: #ca7e32;
+        color: #ffffff;
+        cursor: pointer;
+        }
+
+        .subtotal {
+        font-weight: 700;
+        }
+
+    </style>
+
+    <script>
+        var cont = 1;
+        var subtotais = [];
+        
+        function addlinha() {
+            cont++;
+
+            tabela = document.querySelector("#container");
+
+            linha = '<div class="tab' + cont + ' tab"><span id="t1cel' + cont + ' cel descr"> <select name="select" id="select' + cont + '"> <option value="hotdog" selected>Hot Dog</option><option value="hamburguer" >Hamburguer</option><option value="batata" >Batata Frita</option></select></span><span class="t' + cont + 'cel2  cel  quant"><input type="number" value="1"  min="1" max="10" id="qtd'+ cont +'" onblur="subtotal('+ cont +')"></span><span class="t' + cont + 'cel3 cel preco"><input type="text" placeholder="R$ 0,00" id="prec'+ cont +'" onblur="subtotal('+ cont +')"></span></span><span class="t' + cont + 'cel4  cel  subtotal">R$ 0,00</span></div>';
+
+            tabela.insertAdjacentHTML("beforeend", linha);
+        }
+
+        function removelinha() {
+            var tab = document.querySelector(".tab" + cont);
+            
+            if (cont > 1) {
+                tab.remove();
+                subtotais[cont] = 0;
+                cont--;
+            }
+            
+        }
+    
+        function subtotal(tab) {
+            quant = document.querySelector("#qtd" + tab).value;
+            prec = document.querySelector("#prec" + tab).value;
+            subtot = parseFloat(quant) * parseFloat(prec);
+            
+            if (isNaN(subtot)) {
+                subtot = 0;
+            }
+            
+            var ajusteprec = parseFloat(prec).toFixed(2);
+            var linhasub = subtot.toFixed(2);
+
+            document.querySelector("#prec" + tab).value = ajusteprec.replace(".", ",");
+            
+            document.querySelector(".t" + tab +"cel4").innerHTML = "R$ "+ linhasub.replace(".", ",");
+            subtotais[tab - 1] = parseFloat(subtot);
+        }
+
+        function calc() {
+            var total = 0;
+            for (var i = 0; i < subtotais.length; i++) {
+                total += subtotais[i];
+            }
+            var disp = total.toFixed(2);
+            document.querySelector("#tot").innerHTML = "R$ " + disp.replace(".", ",");
+        }
+
+               
+    </script>
+</head>
+
+<body>
+    <main>
+        <div class="top">
+            <h1>Lanche ou Net</h1>
+            <div class="btx">
+                <input type="button" id="add" value="+" onclick="addlinha()">
+                <input type="button" id="remove" value="-" onclick="removelinha()">
+            </div>
+        </div>
+
+        <div class="tabela">
+            <div class="tab cabecalho">
+                <span class="cel">Descrição</span>
+                <span class="cel">Quantidade</span>
+                <span class="cel">Preço</span>
+                <span class="cel">Subtotal</span>
+            </div>
+            <div id="container">
+                <div class="tab1 tab ">
+                    <span id="t1cel1 cel descr">
+                        <select name="select" id="select">
+                            <option value="hotdog" selected>Hot Dog</option>
+                            <option value="hamburguer">Hamburguer</option>
+                            <option value="batata">Batata Frita</option>
+                        </select></span><span class="t1cel2 cel quant">
+                        <input type="number" value="1" min="1" max="10" name="" id="qtd1" onblur="subtotal(1)">
+                    </span>
+                    <span class="t1cel3 cel preco">
+                        <input type="text" placeholder="R$ 0,00" id="prec1" onblur="subtotal(1)">
+                    </span>
+                    </span>
+                    <span class="t1cel4 cel subtotal">R$ 0,00</span>
+                </div>
+            </div>
+
+
+
+            <div class="total">
+                <h2 id="tot">R$ 0,00</h2>
+                <div class="btx">
+                    <input type="button" value="Calcular" onclick="calc()">
+                </div>
+            </div>
+
+
+        </div>
+
+
+        </table>
+    </main>
+</body>
+
+</html>
